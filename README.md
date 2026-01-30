@@ -1,48 +1,137 @@
-# Example Dioxus/Rust application monitoring sensor devices using the [BleuIO](https://bleuio.com) dongle
+# HibouAir Desktop Air Quality Dashboard  
+**Rust · Dioxus · BLE · BleuIO**
 
-This is my first try to develop a desktop application in Rust using the [Dioxus](https://dioxuslabs.com) framework.
+A cross-platform **desktop application built with Rust and Dioxus** that connects to a **BleuIO USB BLE dongle**, scans nearby **HibouAir air-quality sensors**, decodes their BLE advertisement data, and displays real-time environmental measurements in a clean desktop dashboard.
 
-The kinds of sensor that could be monitored by this application are the ones from [Smart Sensor Devices AB](https://smartsensordevices.com), specifically the [HibouAIR](https://smartsensordevices.com/our-products-and-solutions/) sensors.
+The application runs as a **native desktop window** and does **not require a browser**.
 
-## How it works
-1. The app starts by trying to find a USB device with the Vendor ID and Product ID of the BlueIO dongle.
-2. If valid device found, it tries to open the corresponding USB Serial port.
-3. If open succeeded, turns echo off with the 'ATE0' command.
-4. Enables verbose mode with the 'ATV1' command.
-5. Starts scanning for sensor advertisment with the 'AT+FINDSCANDATA=FF5B07' command.
+---
 
-## Screenshot
-![Screenshot](/img/SCR-20260126-lahq.png)
+## Features
 
-![Screenshot](/img/SCR-20260120-lqgp.png)
+- Native **Rust desktop application** (macOS, Linux, Windows)
+- Built with **Dioxus Desktop**
+- Uses **BleuIO USB dongle** for BLE scanning via serial port
+- Real-time scanning of **HibouAir sensors**
+- Decodes BLE advertisement (Manufacturer Data – Company ID `0x075B`)
+- Supports **CO₂** and **PM** HibouAir devices
+- Stable decoding by accepting **Beacon Type `0x05` only**
+- Clean UI with device-type header and metric panels
 
-The application has been tested on macos and on my Raspberry Pi 5 with the latest Trixie distro.
+---
+
+## Supported Sensors
+
+- **HibouAir CO₂ sensors**
+- **HibouAir PM sensors**
+
+Each device advertises sensor data over BLE, which is decoded locally without cloud dependencies.
+
+---
+
+## How It Works
+
+1. The app searches for a **BleuIO USB dongle** using its **VID/PID**
+2. Opens the corresponding **serial port**
+3. Sends initialization commands:
+   - `ATE0` → disable echo  
+   - `ATV1` → enable verbose mode
+4. Starts BLE scanning using:  
+   `AT+FINDSCANDATA=FF5B07`
+5. BleuIO returns BLE advertisement packets as JSON
+6. The app:
+   - Extracts Manufacturer Specific Data (`0xFF`)
+   - Verifies company ID `0x075B` (HibouAir)
+   - Decodes **Beacon Type `0x05`** (full payload only)
+7. Sensor values are parsed and rendered in the UI
+
+---
 
 ## Project Structure
-The src/ directory is organized into functional modules:
-
-- src/components/: Contains UI components.
-- dashboard.rs: The main dashboard view (formerly Hero component).
-- sensor_panel.rs: The sensor display component.
-- src/models/: Contains data models and parsing logic.
-- bleuio.rs: BleuIO dongle definitions and response parsing.
-- hibouair.rs: HibouAir sensor data structure and parsing.
-- src/hooks/: Contains custom Dioxus hooks.
-- use_bleuio.rs: Encapsulates the serial port communication logic.
-- src/main.rs: Handles window configuration and mounting the App.
 
 ```
 src/
 ├── components/
 │   ├── dashboard.rs
-│   ├── mod.rs
-│   └── sensor_panel.rs
+│   ├── sensor_panel.rs
+│   └── mod.rs
 ├── hooks/
-│   ├── mod.rs
-│   └── use_bleuio.rs
+│   ├── use_bleuio.rs
+│   └── mod.rs
 ├── models/
 │   ├── bleuio.rs
 │   ├── hibouair.rs
+│   ├── sensor_data.rs
 │   └── mod.rs
-└── main.rs
-````
+├── main.rs
+assets/
+├── main.css
+├── tailwind.css
+└── favicon.ico
+```
+
+---
+
+## Requirements
+
+### Hardware
+- **BleuIO USB BLE dongle**
+- One or more **HibouAir sensors**
+
+### Software
+- Rust (stable)
+- Dioxus CLI
+
+---
+
+## Installation
+
+### Install Rust
+```
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+```
+
+### Install Dioxus CLI
+```
+cargo install dioxus-cli
+```
+
+### Clone repository
+```
+git clone <repo-url>
+cd hibouair-desktop-dashboard
+```
+
+---
+
+## Running the App
+
+### Development (hot reload)
+```
+dx serve
+```
+
+### Using Cargo
+```
+cargo run
+```
+
+---
+
+## Notes
+
+- Only **Beacon Type `0x05`** is processed for stability
+- No cloud dependency – all decoding is local
+- Designed for real-time monitoring
+
+---
+
+## Credits
+
+- HibouAir – Air quality sensors  
+- BleuIO – USB BLE dongle  
+- Dioxus – Rust UI framework  
+
+---
+
+Built with **Rust** for reliable, real-time air quality monitoring.
