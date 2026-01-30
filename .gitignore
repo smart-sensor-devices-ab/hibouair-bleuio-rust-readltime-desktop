@@ -1,0 +1,79 @@
+# =========================
+# Rust / Cargo
+# =========================
+/target/
+**/*.rs.bk
+Cargo.lock
+
+# =========================
+# Dioxus / Web / Desktop
+# =========================
+dist/
+build/
+.dx/
+.dioxus/
+wasm-bindgen.log
+
+# =========================
+# Assets build artifacts
+# =========================
+assets/.cache/
+assets/.dx/
+assets/.dioxus/
+
+# =========================
+# Logs & runtime files
+# =========================
+*.log
+*.pid
+
+# =========================
+# OS-specific
+# =========================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Linux
+*~
+
+# =========================
+# Editors / IDEs
+# =========================
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# =========================
+# Environment / secrets
+# =========================
+.env
+.env.local
+.env.*.local
+
+# =========================
+# Serial / device artifacts
+# =========================
+*.tty
+*.usb
+*.port
+
+# =========================
+# Test / coverage
+# =========================
+coverage/
+lcov.info
+
+# =========================
+# Temporary files
+# =========================
+tmp/
+temp/
+.cache/
