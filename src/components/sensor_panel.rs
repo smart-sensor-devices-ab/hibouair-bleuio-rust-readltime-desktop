@@ -65,6 +65,31 @@ fn SensorPanelCO2(sensor: HibouAir) -> Element {
 }
 
 #[component]
+fn SensorPanelCO2Noise(sensor: HibouAir) -> Element {
+    rsx! {
+        SensorCard {
+            header: header_title(&sensor),
+            id: sensor.get_board_id_string(),
+
+            div {
+                class: "grid gap-8",
+                style: "grid-template-columns: repeat(6, minmax(0, 1fr));",
+
+                Metric { label: "CO2".to_string(),      value: format!("{} ppm", sensor.get_co2()) }
+                Metric { label: "VOC".to_string(),      value: if sensor.get_voc_view().is_empty() { "-".to_string() } else { sensor.get_voc_view() } }
+                Metric { label: "VOC type".to_string(), value: if sensor.get_voc_type() == 0 { "Old".to_string() } else { "Resistance".to_string() } }
+                Metric { label: "PM1.0".to_string(),    value: format!("{:.1} μg/m³", sensor.get_pm1_0()) }
+                Metric { label: "PM2.5".to_string(),    value: format!("{:.1} μg/m³", sensor.get_pm2_5()) }
+                Metric { label: "PM10".to_string(),     value: format!("{:.1} μg/m³", sensor.get_pm10()) }
+                Metric { label: "Bar".to_string(),      value: format!("{} mbar", sensor.get_bar()) }
+                Metric { label: "Humidity".to_string(), value: format!("{:.0} %rh", sensor.get_hum()) }
+                Metric { label: "Temp".to_string(),     value: format!("{:.1} °C", sensor.get_temp()) }
+            }
+        }
+    }
+}
+
+#[component]
 fn SensorPanelPM(sensor: HibouAir) -> Element {
     rsx! {
         SensorCard {
@@ -118,6 +143,7 @@ pub fn SensorPanel(sensor: HibouAir) -> Element {
     match sensor.get_board_type() {
         HibouAirType::Co2Sensor => rsx! { SensorPanelCO2 { sensor: sensor.clone() } },
         HibouAirType::PmSensor  => rsx! { SensorPanelPM  { sensor: sensor.clone() } },
+        HibouAirType::Co2Noise  => rsx! { SensorPanelCO2Noise { sensor: sensor.clone() } },
         _ => rsx! { SensorPanelUnknown { sensor: sensor.clone() } },
     }
 }
